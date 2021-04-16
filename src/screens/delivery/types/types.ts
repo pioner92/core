@@ -18,6 +18,13 @@ export interface IGetCitiesResponse {
   towns: ICityItem[];
 }
 
+export interface IOrderTypesItem {
+  id: string;
+  name: string;
+  descriprion: string;
+  logo: string;
+}
+
 export interface IOrganisation {
   GPS: {
     latitude: string;

@@ -3,21 +3,19 @@ import {ThemedButton} from '../../../../../components/buttons/themed-button';
 import {ModalWithTitleAndDescription} from '../../../../../components/modal/modal-with-title-and-description';
 
 interface IModalDeliveryTime {
-  time: string;
   onPress: () => void;
+  title: string;
+  description: string;
 }
 
 export const ModalDeliveryTime: React.FC<IModalDeliveryTime> = ({
-  time = 0,
+  title,
+  description,
   onPress,
 }) => {
   return (
-    <ModalWithTitleAndDescription
-      title={`Доставим за ${time} минут`}
-      description={`Примерное время доставки – около ${time} минут.`}>
+    <ModalWithTitleAndDescription title={title} description={description}>
       <ThemedButton rounded={true} label="Понятно" onPress={onPress} />
     </ModalWithTitleAndDescription>
   );
 };
-
-

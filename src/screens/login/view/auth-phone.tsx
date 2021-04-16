@@ -75,6 +75,7 @@ export const AuthPhone: React.FC<TProps> = ({navigation}) => {
           onPressPolicy={openPolicy}
         />
         <ThemedButton
+          wrapperStyle={{marginBottom:10}}
           onPress={onPressNext}
           label="ДАЛЕЕ"
           rounded={true}

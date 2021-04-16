@@ -3,20 +3,21 @@ import {BottomSheetMenuType} from '../../screens/delivery/view/organisation-list
 
 export type TRootStackParamList = {
   [Routes.AuthPhone]: undefined;
-  [Routes.DeliveryAndPayment]: undefined;
-  [Routes.Policy]: undefined;
-  [Routes.AddressCreate]: undefined;
   [Routes.AuthCode]: {
     phoneNumber: string;
     request_id: string;
   };
-  [Routes.ProfileNotAuth]: {};
-  [Routes.Catalog]: {};
-  [Routes.ProfileAuth]: {};
+  [Routes.SelectCity]: undefined;
+  [Routes.DeliveryAndPayment]: undefined;
+  [Routes.Policy]: undefined;
+  [Routes.AddressCreate]: {screenType:};
+  [Routes.AddressList]: undefined;
+  [Routes.ProfileNotAuth]: undefined;
+  [Routes.Catalog]: undefined;
+  [Routes.ProfileAuth]: undefined;
   [Routes.SelectOrganisationInMap]: {
     bottomSheetMenuType: keyof typeof BottomSheetMenuType;
   };
   [Routes.TabRootScreen]: undefined;
+  [Routes.Profile]: undefined;
 };
-
-

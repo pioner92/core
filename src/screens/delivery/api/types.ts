@@ -13,3 +13,18 @@ export interface ISaveNewAddressRequest extends IAddressItem {}
 export interface IAddressItemResponse extends IAddressItem {
   id: number;
 }
+
+export interface IGetOrganisationByAddressRequest {
+  country: string;
+  city: string;
+  street: string;
+  house: string;
+  city_id: string;
+}
+
+export interface IGetOrganisationByAddressResponse {
+  org_id: string;
+  successMsgTitle: string;
+  successMsgSubtitle: string;
+  work_status: boolean;
+}

@@ -11,6 +11,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedButton} from '../../../components/buttons/themed-button';
 import {CreateNewAddressModal} from './components/create-new-address-modal';
 import {useBottomSheetMenu} from '../../../components/bottom-sheet-menu/bottom-sheet-menu-context';
+import {ActionDelivery} from '../store/action-delivery';
 
 const {UIStyles} = Config;
 
@@ -25,18 +26,20 @@ export const SelectCity: React.FC = React.memo(() => {
 
   const onPressSave = () => {
     bottomModal?.show();
+    dispatch(ActionDelivery.setSelectedCityId(selectedCity));
   };
 
   useEffect(() => {
     dispatch(AsyncActionsDelivery.getCities());
+    dispatch(AsyncActionsDelivery.getOrderTypes());
   }, []);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1}}>
       <ScreenHeaderWithTitle>Выберите город</ScreenHeaderWithTitle>
-      <View style={UIStyles.paddingH16}>
+      <View style={[UIStyles.paddingH16, {flex: 1}]}>
         <FlatList
-          contentContainerStyle={UIStyles.paddingV16}
+          contentContainerStyle={[UIStyles.paddingV16, {paddingBottom: 10}]}
           ItemSeparatorComponent={Divider}
           data={cities}
           renderItem={({item}) => (
@@ -59,7 +62,7 @@ export const SelectCity: React.FC = React.memo(() => {
         label="Сохранить"
         onPress={onPressSave}
       />
-      <CreateNewAddressModal />
+      <CreateNewAddressModal cityId={selectedCity} />
     </SafeAreaView>
   );
 });
@@ -67,7 +70,7 @@ export const SelectCity: React.FC = React.memo(() => {
 const styles = StyleSheet.create({
   buttonWrapper: {
     backgroundColor: '#fff',
-    paddingBottom: 30,
+    paddingBottom: 10,
     ...UIStyles.paddingH16,
   },
 });

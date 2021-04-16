@@ -1,5 +1,12 @@
-import React, {Fragment} from 'react';
-import {Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View} from 'react-native';
+import React, {Fragment, useEffect} from 'react';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import {ScreenHeaderTitleWithBackButton} from '../../../components/screen-header/screen-header-title-with-back-button';
 import {InputWithLabel} from '../../../components/input/input-with-label';
 import {useInput} from '../../../system/hooks/use-input';
@@ -12,16 +19,26 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useDispatch} from 'react-redux';
 import {IAddressItem} from '../types/types';
 import {ModalDeliveryNotAvailable} from './components/modals/modal-delivery-not-available';
-import {useBottomSheetMenu} from '../../../components/bottom-sheet-menu/bottom-sheet-menu-context';
 import {useModal} from '../../../components/modal/modal-provider';
 import {useNavigation} from '@react-navigation/native';
 import {Routes} from '../../../navigation/routes';
 import {BottomSheetMenuType} from './organisation-list-with-map';
+import {AsyncActionsDelivery} from '../store/async-actions-delivery';
+import {StackScreenProps} from '@react-navigation/stack';
+import {TRootStackParamList} from '../../../navigation/types/types';
 
 const {UIStyles} = Config;
 
-export const AddressCreate: React.FC = React.memo(() => {
+enum ScreenType {
+  createAddress = 'createAddress',
+  acceptAddress = 'acceptAddress',
+}
+
+type TProps = StackScreenProps<TRootStackParamList, Routes.AddressCreate>;
+
+export const AddressCreate: React.FC<TProps> = React.memo(({route}) => {
   const cities = useTypedSelector(state => state.delivery.cities);
+  const cityId = useTypedSelector(state => state.delivery.selectedCityId);
 
   const selectCity = useInput(cities?.[0]?.title);
   const inputStreet = useInput('');
@@ -31,6 +48,7 @@ export const AddressCreate: React.FC = React.memo(() => {
   const inputFloor = useInput('');
   const inputDomophone = useInput('');
 
+  const modal = useModal();
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
   const {navigate} = useNavigation();
@@ -50,13 +68,22 @@ export const AddressCreate: React.FC = React.memo(() => {
     country: 'Россия',
   };
 
-  const bottomModal = useBottomSheetMenu();
-  const modal = useModal();
-
-  const onPressSave = () => {
-    // bottomModal?.show();
-    modal.show();
-    // dispatch(AsyncActionsDelivery.saveNewAddress(data));
+  const onPressSave = async () => {
+    dispatch(AsyncActionsDelivery.saveNewAddress(data));
+    try {
+      dispatch(
+        AsyncActionsDelivery.getOrganisationByAddress({
+          city: data.city,
+          street: data.street,
+          city_id: cityId,
+          house: data.house_num,
+          country: data.country,
+        }),
+      );
+      navigate(Routes.AddressList);
+    } catch (e) {
+      modal.show();
+    }
   };
 
   const inputs = [
@@ -67,15 +94,18 @@ export const AddressCreate: React.FC = React.memo(() => {
     {label: 'Код домофона', props: inputDomophone},
   ];
 
-  const onPressSetAddress = () => {};
+  // const onPressSetAddress = () => {};
   const onPressTakeSelf = () => {
-    console.log('PRESS');
     modal.hide();
-    navigate(
-      Routes.SelectOrganisationInMap,
-      {bottomSheetMenuType:BottomSheetMenuType.Organisations},
-    );
+    navigate(Routes.SelectOrganisationInMap, {
+      bottomSheetMenuType: BottomSheetMenuType.Organisations,
+    });
   };
+
+  useEffect(() => {
+    return modal.hide;
+  }, []);
+
   return (
     <SafeAreaView style={{backgroundColor: Config.Color.WHITE}}>
       <KeyboardAvoidingView
@@ -86,11 +116,13 @@ export const AddressCreate: React.FC = React.memo(() => {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}>
         <View style={styles.container}>
           <ScreenHeaderTitleWithBackButton title={'Адрес доставки'} />
-          <Select
-            wrapperStyle={{marginVertical: 16}}
-            items={cities}
-            onSelect={onSelectCity}
-          />
+          {cities?.length > 0 ? (
+            <Select
+              wrapperStyle={{marginVertical: 16}}
+              items={cities}
+              onSelect={onSelectCity}
+            />
+          ) : null}
 
           <InputWithLabel
             wrapperStyle={{marginTop: 24}}

@@ -1,7 +1,13 @@
 import {ApiService} from '../../../system/api/api-service';
-import {IAddressItem, IGetCitiesResponse} from '../types/types';
+import {
+  IAddressItem,
+  IGetCitiesResponse,
+  IOrderTypesItem,
+} from '../types/types';
 import {
   IAddressItemResponse,
+  IGetOrganisationByAddressRequest,
+  IGetOrganisationByAddressResponse,
   IGetOrganisationsRequest,
   IGetOrganisationsResponse,
 } from './types';
@@ -22,5 +28,17 @@ export class RequestDelivery {
   }
   static getUserAddressList(): Promise<IAddressItemResponse[]> {
     return ApiService.post('/api/user/getUserAddress');
+  }
+
+  static getOrderTypes(): Promise<IOrderTypesItem[]> {
+    return ApiService.get('/api/info/getOrderTypes');
+  }
+
+  static getOrganisationByAddress(
+    data: IGetOrganisationByAddressRequest,
+  ): Promise<IGetOrganisationByAddressResponse> {
+    return ApiService.get('/api/organizations/getOrganizationByAddress', {
+      params: data,
+    });
   }
 }

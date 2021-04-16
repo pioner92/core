@@ -2,7 +2,6 @@ import React, {useCallback, useEffect, useRef} from 'react';
 import {View} from 'react-native';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {HandleComponent} from '../handle-component';
-import {useBottomSheetMenu} from '../bottom-sheet-menu-context';
 
 interface IBottomSheetMenu {
   snapPoints?: Array<string>;
@@ -23,6 +22,7 @@ export const BottomSheetMenu: React.FC<IBottomSheetMenu> = React.memo(
 
     return (
       <BottomSheet
+        enableContentPanningGesture={false}
         ref={bottomSheetRef}
         handleComponent={HandleComponent}
         index={1}

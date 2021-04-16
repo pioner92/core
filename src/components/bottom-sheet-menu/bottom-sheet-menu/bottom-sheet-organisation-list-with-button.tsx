@@ -6,17 +6,24 @@ import {
 } from './bottom-sheet-organisation-list';
 import {OrganisationListItemWithChecked} from '../../../screens/delivery/view/components/organisation-list/organisation-list-item-with-checked';
 import {Config} from '../../../config';
+import {useNavigation} from '@react-navigation/native';
+import {Routes} from '../../../navigation/routes';
 
 type props = Omit<IBottomSheetMenuOrganisationList, 'RenderItem'>;
 
-interface BottomSheetOrganisationListWithButton extends props {}
+interface BottomSheetOrganisationListWithButton extends props {
+  onPressButton: () => void;
+}
 
 export const BottomSheetOrganisationListWithButton: React.FC<BottomSheetOrganisationListWithButton> = ({
   data,
   onSelectItem,
+                                                                                                         onPressButton,
 }) => {
+
   return (
     <BottomSheetOrganisationList
+      contentStyle={{height: '100%'}}
       RenderItem={props => (
         <OrganisationListItemWithChecked title={props.data.title} {...props} />
       )}
@@ -26,13 +33,14 @@ export const BottomSheetOrganisationListWithButton: React.FC<BottomSheetOrganisa
         return (
           <ThemedButton
             wrapperStyle={{
+              marginTop: 'auto',
               paddingHorizontal: 16,
               paddingTop: 5,
               backgroundColor: Config.Color.WHITE,
             }}
             rounded={true}
             label={'Выбрать ресторан'}
-            onPress={() => {}}
+            onPress={onPressButton}
           />
         );
       }}

@@ -5,7 +5,7 @@ import {UIStyles} from '../../../assets/styles';
 import {ProfileIcon} from '../../../components/icons/profile-icon';
 import {RubleWithCircleArrowIcon} from '../../../components/icons/ruble-with-circle-arrow-icon';
 import {ExitSvg} from '../../../components/icons/exit-icon';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {Routes} from '../../../navigation/routes';
 import {useDispatch} from 'react-redux';
 import {useTypedSelector} from '../../../system/hooks/use-typed-selector';
@@ -39,9 +39,9 @@ const ScreenItems = [
     RubleWithCircleArrowIcon,
     Routes.ProfileSettings,
   ),
-  createScreenRowItem('Мои заказы', CartIcon, Routes.ProfileSettings),
+  createScreenRowItem('Мои заказы', CartIcon, Routes.Orders),
   createScreenRowItem('Настройки профиля', ProfileIcon, Routes.ProfileSettings),
-  createScreenRowItem('Изменить город', MapMarkerIcon, Routes.ProfileSettings),
+  createScreenRowItem('Изменить город', MapMarkerIcon, Routes.SelectCity),
   createScreenRowItem('Выйти', ExitSvg, Routes.AuthPhone),
 ];
 

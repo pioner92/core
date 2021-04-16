@@ -9,7 +9,7 @@ import {IStore} from './root-store';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['system', 'login'],
+  whitelist: ['system', 'login', 'catalog', 'delivery', 'profile'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -51,7 +51,7 @@ export const ProductListItemContent: React.FC<IProductListItemContent> = ({
         <ThemedButton
           rounded={true}
           wrapperStyle={{marginTop: 18}}
-          style={{height: 50}}
+          buttonStyle={{height: 50}}
           modifier={'bordered'}
           label={'Добавить'}
           onPress={onPressAdd}

@@ -17,6 +17,8 @@ import {TRootStackParamList} from '../../../navigation/types/types';
 import {Routes} from '../../../navigation/routes';
 import {BottomSheetOrganisationListWithButton} from '../../../components/bottom-sheet-menu/bottom-sheet-menu/bottom-sheet-organisation-list-with-button';
 import {windowHeight} from '../../../system/helpers/window-size';
+import {ActionDelivery} from '../store/action-delivery';
+import {AsyncActionsCatalog} from '../../catalog/store/async-actions-catalog';
 
 export enum BottomSheetMenuType {
   Contacts = 'Contacts',
@@ -29,22 +31,38 @@ type TProps = StackScreenProps<
 >;
 
 export const OrganisationListWithMap: React.FC<TProps> = React.memo(
-  ({route}) => {
+  ({route, navigation}) => {
     const mapRef = useRef<MapView>(null);
     const [currentLocation, setCurrentLocation] = useState<LatLng | null>(null);
+    const [selectedOrganisation, setSelectedOrganisation] = useState(-1);
+    const orderType = useTypedSelector(
+      state => state.delivery.selectedOrderTypeId,
+    );
     const dispatch = useDispatch();
 
     const organisations = useTypedSelector(
       state => state.delivery.organisations,
     );
+    const selectedCityId = useTypedSelector(
+      state => state.delivery.selectedCityId,
+    );
+    const selectedOrderTypeId = useTypedSelector(
+      state => state.delivery.selectedOrderTypeId,
+    );
     const markers = useRef<{[key: number]: Marker}>({});
     const bottomSheetMenuType = route.params?.bottomSheetMenuType;
 
-    useEffect(() => {
+    const onPressButton = () => {
       dispatch(
-        AsyncActionsDelivery.getOrganisations({id: 1830, order_type: 1}),
+        AsyncActionsCatalog.getHomepageData({
+          rest_id: selectedOrganisation,
+          order_type: +orderType,
+          page: 1,
+        }),
       );
-    }, []);
+      //@ts-ignore
+      navigation.navigate(Routes.TabRootScreen, {screen: Routes.Catalog});
+    };
 
     const animateToRegion = (props: LatLng) => {
       mapRef.current?.animateToRegion(
@@ -70,6 +88,8 @@ export const OrganisationListWithMap: React.FC<TProps> = React.memo(
     const onSelectListItem = (item: IOrganisation) => {
       animateToRegion(convertCoordinatesToNumber(item.GPS));
       markers.current[item.id]?.showCallout();
+      setSelectedOrganisation(item.id);
+      dispatch(ActionDelivery.setSelectedOrganisationId(item.id.toString()));
     };
 
     const animateToCurrentPosition = useCallback(() => {
@@ -83,6 +103,15 @@ export const OrganisationListWithMap: React.FC<TProps> = React.memo(
         markers.current[item.id] = ref;
       }
     };
+
+    useEffect(() => {
+      dispatch(
+        AsyncActionsDelivery.getOrganisations({
+          id: +selectedCityId,
+          order_type: +selectedOrderTypeId,
+        }),
+      );
+    }, [selectedCityId, selectedOrderTypeId]);
 
     useEffect(() => {
       if (organisations.length > 0) {
@@ -127,6 +156,7 @@ export const OrganisationListWithMap: React.FC<TProps> = React.memo(
           />
         ) : (
           <BottomSheetOrganisationListWithButton
+            onPressButton={onPressButton}
             data={organisations}
             onSelectItem={onSelectListItem}
           />

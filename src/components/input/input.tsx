@@ -18,6 +18,7 @@ export interface IInput {
   value: string;
   onChangeText: (text: string) => void;
   keyboardType?: KeyboardTypeOptions;
+  multiline?: boolean;
 }
 
 export const Input: React.FC<IInput> = ({
@@ -28,10 +29,12 @@ export const Input: React.FC<IInput> = ({
   onChangeText,
   value,
   keyboardType = 'default',
+  multiline = false,
 }) => {
   return (
     <View style={[styles.container, inputStyle]}>
       <TextInput
+        multiline={multiline}
         onChangeText={onChangeText}
         value={value}
         keyboardType={keyboardType}

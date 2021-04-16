@@ -4,8 +4,9 @@ import {BASE_URL} from '../../config';
 export const ApiService = axios.create({
   headers: {
     'Content-Type': 'application/json',
-    Authorization: 'Bearer bbb9dfef7f8a192ae2a28e4e41e0497e',
+    Authorization: 'Bearer abf038b312fca2fc08cad87a1522d73a',
     'x-api-token': 'htug9ji0oqpr329442u891q3sdasw',
+    // sensitive: true,
   },
   baseURL: BASE_URL,
 });

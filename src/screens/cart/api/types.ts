@@ -14,18 +14,18 @@ export interface ICartGetDataResponse {
   products: ICartGetDataProductResponse[];
 }
 
-interface ICartGetDataProductResponse {
+export interface ICartGetDataProductResponse {
   key: string;
-  additional_cost: null;
-  total_cost: null;
-  id: null;
-  price: null;
-  weight: null;
-  count: null;
-  max_count: null;
-  img_url: null;
-  title: null;
-  desc: null;
+  additional_cost: number;
+  total_cost: number;
+  id: number;
+  price: number;
+  weight: number;
+  count: number;
+  max_count: number;
+  img_url: string;
+  title: string;
+  desc: string;
   options: {
     childs: {
       additives: ICartGetDataItemResponse[];
@@ -43,10 +43,10 @@ interface ICartGetDataItemResponse {
 }
 
 export interface ICartAddOrderRequest {
-  id: 0;
-  count: 0;
-  order_type: 1;
-  id_org: 3691;
+  id: number;
+  count: number;
+  order_type: number;
+  id_org: number;
   additives: ICartAddOrderItem[];
   size: ICartAddOrderItem[];
   type: ICartAddOrderItem[];
@@ -54,6 +54,6 @@ export interface ICartAddOrderRequest {
 }
 
 interface ICartAddOrderItem {
-  id: 0;
-  count: 0;
+  id: number;
+  count: number;
 }

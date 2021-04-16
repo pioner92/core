@@ -1,8 +1,10 @@
 import {asyncActionCreator} from '../../../system/store/action-creator';
-import {IGetCitiesResponse} from '../types/types';
+import {IGetCitiesResponse, IOrderTypesItem} from '../types/types';
 import {RequestDelivery} from '../api/request-delivery';
 import {
   IAddressItemResponse,
+  IGetOrganisationByAddressRequest,
+  IGetOrganisationByAddressResponse,
   IGetOrganisationsRequest,
   IGetOrganisationsResponse,
   ISaveNewAddressRequest,
@@ -30,4 +32,18 @@ export class AsyncActionsDelivery {
     IAddressItemResponse[],
     Error
   >('DELIVERY/GET_USER_ADDRESS_LIST', RequestDelivery.getUserAddressList);
+
+  static getOrderTypes = asyncActionCreator<void, IOrderTypesItem[], Error>(
+    'DELIVERY/GET_ORDER_TYPES',
+    RequestDelivery.getOrderTypes,
+  );
+
+  static getOrganisationByAddress = asyncActionCreator<
+    IGetOrganisationByAddressRequest,
+    IGetOrganisationByAddressResponse,
+    Error
+  >(
+    'DELIVERY/GET_ORGANISATION_BY_ADDRESS',
+    RequestDelivery.getOrganisationByAddress,
+  );
 }

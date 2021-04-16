@@ -21,6 +21,8 @@ import {PortalHost, PortalProvider} from '@gorhom/portal';
 import {BottomSheetMenuContext} from './src/components/bottom-sheet-menu/bottom-sheet-menu-context';
 import {ModalProvider} from './src/components/modal/modal-provider';
 import {configureStore} from './src/system/store/configure-store';
+import {useTypedSelector} from './src/system/hooks/use-typed-selector';
+import {ApiService} from './src/system/api/api-service';
 
 if (__DEV__) {
   //@ts-ignore
@@ -64,7 +66,6 @@ const App: React.FC = ({children}) => {
                       <StatusBar barStyle={'dark-content'} />
                       <RootNavigator>{children}</RootNavigator>
                     </ModalProvider>
-                    {/*<BottomSheetModalComponent />*/}
                   </BottomSheetMenuContext>
                   <PortalHost name="modal" />
                 </NavigationContainer>
@@ -77,13 +78,5 @@ const App: React.FC = ({children}) => {
     </SafeAreaProvider>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: Color.WHITE,
-  },
-});
 
 export default App;

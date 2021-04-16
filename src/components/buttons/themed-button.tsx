@@ -23,7 +23,7 @@ export interface IThemedButton {
   onPress: () => void;
   labelStyle?: TextStyle;
   modifier?: 'bordered' | 'default';
-  style?: ViewStyle;
+  buttonStyle?: ViewStyle;
   theme?: keyof typeof themeNames;
   disabled?: boolean;
   rounded?: boolean;
@@ -34,7 +34,7 @@ export const ThemedButton: React.FC<IThemedButton> = ({
   label,
   labelStyle,
   theme = DEFAULT_BUTTON_THEME,
-  style,
+  buttonStyle,
   disabled = false,
   rounded = false,
   modifier = 'default',
@@ -45,7 +45,7 @@ export const ThemedButton: React.FC<IThemedButton> = ({
 
   const isBordered = modifier === 'bordered';
 
-  const buttonStyle: ViewStyle = {
+  const styleButton: ViewStyle = {
     backgroundColor: !isBordered
       ? disabled
         ? themeStyles.disabled
@@ -58,12 +58,12 @@ export const ThemedButton: React.FC<IThemedButton> = ({
         : themeStyles.normal
       : 'transparent',
     borderWidth: isBordered ? 1 : 0,
-    ...style,
+    ...buttonStyle,
   };
 
   const textStyle = {
-    color: isBordered ? themeStyles.normal : themeStyles.text,
     ...labelStyle,
+    color: isBordered ? themeStyles.normal : themeStyles.text,
   };
 
   return (
@@ -71,7 +71,7 @@ export const ThemedButton: React.FC<IThemedButton> = ({
       <TouchableOpacity
         onPress={onPress}
         disabled={disabled}
-        style={[styles.container, buttonStyle]}>
+        style={[styles.container, styleButton]}>
         <Text style={[styles.text, textStyle]}>{label}</Text>
       </TouchableOpacity>
     </View>
@@ -79,6 +79,10 @@ export const ThemedButton: React.FC<IThemedButton> = ({
 };
 
 const styles = StyleSheet.create({
+  wrapper: {
+    marginTop: 'auto',
+    width: '100%',
+  },
   container: style.view({
     height: 40,
     width: '100%',
@@ -87,10 +91,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   }),
-  wrapper: {
-    marginTop: 'auto',
-    width: '100%',
-  },
   text: style.text({
     ...UIStyles.font14b,
     textTransform: 'uppercase',

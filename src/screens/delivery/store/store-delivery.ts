@@ -1,5 +1,8 @@
-import {ICityItem, IOrganisation} from '../types/types';
-import {IAddressItemResponse} from '../api/types';
+import {ICityItem, IOrderTypesItem, IOrganisation} from '../types/types';
+import {
+  IAddressItemResponse,
+  IGetOrganisationByAddressResponse,
+} from '../api/types';
 
 export interface IStoreDelivery {
   isLoading: boolean;
@@ -8,6 +11,11 @@ export interface IStoreDelivery {
   addressList: IAddressItemResponse[];
   cities: ICityItem[];
   organisations: IOrganisation[];
+  selectedOrganisationId: string;
+  selectedCityId: string;
+  orderTypes: IOrderTypesItem[];
+  selectedOrderTypeId: string;
+  getOrganisationResult: IGetOrganisationByAddressResponse;
 }
 
 export const initialStateDelivery: IStoreDelivery = {
@@ -17,4 +25,9 @@ export const initialStateDelivery: IStoreDelivery = {
   addressList: [],
   cities: [],
   organisations: [],
+  selectedOrganisationId: '',
+  selectedCityId: '',
+  orderTypes: [],
+  selectedOrderTypeId: '-1',
+  getOrganisationResult: {} as IGetOrganisationByAddressResponse,
 };

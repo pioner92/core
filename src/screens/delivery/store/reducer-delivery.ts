@@ -2,8 +2,13 @@ import {ReducerBuilder, reducerWithInitialState} from 'typescript-fsa-reducers';
 import {initialStateDelivery, IStoreDelivery} from './store-delivery';
 import {AsyncActionsDelivery} from './async-actions-delivery';
 import {Success} from 'typescript-fsa';
-import {IGetCitiesResponse} from '../types/types';
-import {IAddressItemResponse, IGetOrganisationsResponse} from '../api/types';
+import {IGetCitiesResponse, IOrderTypesItem} from '../types/types';
+import {
+  IAddressItemResponse,
+  IGetOrganisationByAddressResponse,
+  IGetOrganisationsResponse,
+} from '../api/types';
+import {ActionDelivery} from './action-delivery';
 
 const getCitiesHandlerStarted = (state: IStoreDelivery): IStoreDelivery => {
   return {
@@ -127,6 +132,55 @@ const getUserAddressListHandlerFailed = (
   };
 };
 
+const setSelectedCityIdHandler = (
+  state: IStoreDelivery,
+  id: string,
+): IStoreDelivery => {
+  return {
+    ...state,
+    selectedCityId: id,
+  };
+};
+
+const setSelectedOrderTypeIdHandler = (
+  state: IStoreDelivery,
+  id: string,
+): IStoreDelivery => {
+  return {
+    ...state,
+    selectedOrderTypeId: id,
+  };
+};
+
+const setSelectedOrganisationIdHandler = (
+  state: IStoreDelivery,
+  id: string,
+): IStoreDelivery => {
+  return {
+    ...state,
+    selectedOrganisationId: id,
+  };
+};
+
+const getOrderTypesHandlerDone = (
+  state: IStoreDelivery,
+  {result}: Success<any, IOrderTypesItem[]>,
+): IStoreDelivery => {
+  return {
+    ...state,
+    orderTypes: result,
+  };
+};
+
+const getOrganisationByAddressHandlerDone = (
+  state: IStoreDelivery,
+  {result}: Success<any, IGetOrganisationByAddressResponse>,
+): IStoreDelivery => {
+  return {
+    ...state,
+  };
+};
+
 export const reducerDelivery: ReducerBuilder<IStoreDelivery> = reducerWithInitialState(
   initialStateDelivery,
 )
@@ -171,4 +225,16 @@ export const reducerDelivery: ReducerBuilder<IStoreDelivery> = reducerWithInitia
   .case(
     AsyncActionsDelivery.getUserAddressList.async.failed,
     getUserAddressListHandlerFailed,
+  )
+  //--------------------
+  .case(AsyncActionsDelivery.getOrderTypes.async.done, getOrderTypesHandlerDone)
+  .case(
+    AsyncActionsDelivery.getOrganisationByAddress.async.done,
+    getOrganisationByAddressHandlerDone,
+  )
+  .case(ActionDelivery.setSelectedCityId, setSelectedCityIdHandler)
+  .case(ActionDelivery.setSelectedOrderType, setSelectedOrderTypeIdHandler)
+  .case(
+    ActionDelivery.setSelectedOrganisationId,
+    setSelectedOrganisationIdHandler,
   );

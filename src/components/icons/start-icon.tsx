@@ -4,10 +4,11 @@ import {Config} from '../../config';
 
 export const StartIcon: React.FC<SvgProps> = ({
   fill = Config.Color.BLACK,
+  width = 20,
   ...props
 }) => {
   return (
-    <Svg width={22} height={21} viewBox="0 0 22 21" fill="none" {...props}>
+    <Svg width={width} height={width} viewBox="0 0 22 21" fill="none" {...props}>
       <Path
         fillRule="evenodd"
         clipRule="evenodd"

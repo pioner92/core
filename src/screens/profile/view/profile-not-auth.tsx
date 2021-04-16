@@ -26,7 +26,7 @@ export const ProfileNotAuth: React.FC<TProps> = ({navigation}) => {
             Подарки на день рождения, сохраненные адреса и персональные акции!
           </Text>
           <ThemedButton
-            style={styles.button}
+            buttonStyle={styles.button}
             rounded={true}
             label={'Хочу'}
             onPress={onPress}

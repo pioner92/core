@@ -10,6 +10,7 @@ export enum Routes {
   Catalog = 'Catalog',
   Cart = 'Cart',
   AddressCreate = 'AddressCreate',
+  AcceptAddress = 'AcceptAddress',
   SelectCity = 'SelectCity',
   SelectOrganisationInMap = 'SelectOrganisationInMap',
   AddressList = 'AddressList',
@@ -17,4 +18,6 @@ export enum Routes {
   TabRootScreen = 'TabRootScreen',
   Payment = 'Payment',
   PaymentFinish = 'PaymentFinish',
+  Orders = 'Orders',
+  OrderDetail = 'OrderDetail',
 }

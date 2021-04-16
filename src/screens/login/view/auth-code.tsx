@@ -44,7 +44,7 @@ export const AuthCode: React.FC<TProps> = ({route, navigation}) => {
         }),
       );
       setIsError(false);
-      navigation.navigate(Routes.TabRootScreen);
+      navigation.navigate(Routes.SelectCity);
     } catch (e) {
       setIsError(true);
       console.log('DISPATCH ERROR ', e);

@@ -1,41 +1,79 @@
-import React, {useEffect} from 'react';
-import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {Config} from '../../../config';
 import {PlusIcon} from '../../../components/icons/plus-icon';
 import {useTypedSelector} from '../../../system/hooks/use-typed-selector';
 import {useDispatch} from 'react-redux';
-import {AsyncActionsDelivery} from '../store/async-actions-delivery';
 import {useNavigation} from '@react-navigation/native';
 import {Routes} from '../../../navigation/routes';
 import {AddressListWithCheckedItem} from './components/organisation-list/address-list-with-checked-item';
 import {ScreenHeaderTitleWithBackButton} from '../../../components/screen-header/screen-header-title-with-back-button';
-import {StackNavigationProp} from '@react-navigation/stack';
+import {StackNavigationProp, StackScreenProps} from '@react-navigation/stack';
 import {TRootStackParamList} from '../../../navigation/types/types';
+import {ModalDeliveryTime} from './components/modals/modal-delivery-time';
+import {ThemedButton} from '../../../components/buttons/themed-button';
+import {IAddressItemResponse} from '../api/types';
+import {useModal} from '../../../components/modal/modal-provider';
+import {AsyncActionsDelivery} from '../store/async-actions-delivery';
 
 const {Color, UIStyles} = Config;
 
-type TNavigationProps = StackNavigationProp<
+type TNavigation = StackNavigationProp<
   TRootStackParamList,
   Routes.AddressCreate
 >;
 
-export const AddressList: React.FC = React.memo(() => {
+type TProps = StackScreenProps<TRootStackParamList, Routes.AuthCode>;
+
+export const AddressList: React.FC<TProps> = React.memo(({navigation}) => {
   const userAddressList = useTypedSelector(state => state.delivery.addressList);
   const dispatch = useDispatch();
-  const {navigate} = useNavigation<TNavigationProps>();
+  const {navigate} = useNavigation<TNavigation>();
+  const cityId = useTypedSelector(state => state.delivery.selectedCityId);
+  const deliveryResult = useTypedSelector(
+    state => state.delivery.getOrganisationResult,
+  );
+
+  const modal = useModal();
+
+  const [
+    selectedAddress,
+    setSelectedAddress,
+  ] = useState<IAddressItemResponse>();
 
   const onCreateNewAddress = () => {
     navigate(Routes.AddressCreate);
   };
 
-  const onPressModal = () => {};
+  const onPressGoToMenu = async () => {
+    dispatch(
+      AsyncActionsDelivery.getOrganisationByAddress({
+        street: selectedAddress?.street || '',
+        house: selectedAddress?.house_num || '',
+        country: selectedAddress?.country || '',
+        city: selectedAddress?.city || '',
+        city_id: cityId,
+      }),
+    );
+    modal.show();
+  };
+
+  const onPressModal = () => {
+    navigation.navigate(Routes.TabRootScreen);
+  };
 
   useEffect(() => {
-    dispatch(AsyncActionsDelivery.getUserAddressList());
+    // dispatch(AsyncActionsDelivery.getUserAddressList());
   }, []);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1}}>
       <ScreenHeaderTitleWithBackButton title="Адрес доставки" />
       <View style={styles.contentContainer}>
         <TouchableOpacity
@@ -44,8 +82,20 @@ export const AddressList: React.FC = React.memo(() => {
           <Text>Добавить адрес доставки</Text>
           <PlusIcon fill={Color.GREY_600} />
         </TouchableOpacity>
-        <AddressListWithCheckedItem items={userAddressList} />
-        {/*<ModalDeliveryTime time={'50'} onPress={onPressModal} />*/}
+        <AddressListWithCheckedItem
+          onSelect={setSelectedAddress}
+          items={userAddressList}
+        />
+        <ThemedButton
+          rounded={true}
+          label={'Перейти в меню'}
+          onPress={onPressGoToMenu}
+        />
+        <ModalDeliveryTime
+          title={deliveryResult.successMsgTitle}
+          description={deliveryResult.successMsgSubtitle}
+          onPress={onPressModal}
+        />
       </View>
     </SafeAreaView>
   );
@@ -53,6 +103,7 @@ export const AddressList: React.FC = React.memo(() => {
 
 const styles = StyleSheet.create({
   contentContainer: {
+    flex: 1,
     ...UIStyles.paddingH16,
     paddingTop: 16,
   },

@@ -1,7 +1,7 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Routes} from './routes';
-import {Catalog} from '../screens/catalog/view/Catalog';
+import {Catalog} from '../screens/catalog/view/catalog';
 import {More} from '../screens/more/view/more';
 import {Config} from '../config';
 import {Cart} from '../screens/cart/view/cart';
@@ -58,6 +58,11 @@ export const TabNavigation: React.FC = () => {
       {tabScreens.map((el, index) => {
         return (
           <Tab.Screen
+            listeners={({navigation}) => ({
+              tabPress: e => {
+                navigation.navigate(el.route);
+              },
+            })}
             key={index}
             options={{
               tabBarBadgeStyle: index === 1 && total ? badgeStyle : null,

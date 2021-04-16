@@ -3,6 +3,7 @@ import {IStoreCatalog} from '../../screens/catalog/store/store-catalog';
 import {IStoreDelivery} from '../../screens/delivery/store/store-delivery';
 import {IStoreProfile} from '../../screens/profile/store/store-profile';
 import {IStoreCart} from '../../screens/cart/store/store-cart';
+import {IStoreOrdersHistory} from '../../screens/orders/store/store-orders';
 
 export interface IRequestLoading {
   isLoading: boolean;
@@ -15,4 +16,5 @@ export interface IStore {
   delivery: IStoreDelivery;
   profile: IStoreProfile;
   cart: IStoreCart;
+  ordersHistory: IStoreOrdersHistory;
 }

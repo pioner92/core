@@ -13,6 +13,9 @@ export const useBottomSheetMenu = () => {
   return {
     show: () => ref.current?.present(),
     hide: () => ref.current?.dismiss(),
+    snapTo: (index: number) => ref.current?.snapTo(index, true),
+    expand: () => ref.current?.expand(),
+    collapse: () => ref.current?.collapse(),
   };
 };
 
