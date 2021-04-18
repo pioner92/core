@@ -3,36 +3,34 @@ import {
   SceneRendererProps,
   TabBar,
 } from 'react-native-tab-view';
-import {Animated, Platform, StyleSheet, ViewStyle} from 'react-native';
+import {Animated, Platform, StyleSheet} from 'react-native';
 import React from 'react';
 
 import {Config} from '../../../../../config';
 import {ICategoryItem} from '../../../types/types';
 import {TabBarLabel} from './tab-bar-label';
+
 const {Color} = Config;
 
 type TAllProps = SceneRendererProps & {navigationState: NavigationState<any>};
 
 interface TabBarComponentProps extends TAllProps {
-  categories: ICategoryItem[];
   stylesTabBar: any;
 }
 
 export const TabBarComponent: React.FC<TabBarComponentProps> = React.memo(
-  ({categories, stylesTabBar, ...props}) => {
+  ({ stylesTabBar, ...props}) => {
 
     return (
       <Animated.View style={[styles.stylesTabBar, stylesTabBar]}>
-        {categories.length > 0 ? (
-          <TabBar
-            {...props}
-            scrollEnabled={true}
-            renderLabel={TabBarLabel}
-            style={styles.tabBarContainer}
-            tabStyle={styles.tabStyle}
-            indicatorStyle={styles.indicator}
-          />
-        ) : null}
+        <TabBar
+          {...props}
+          scrollEnabled={true}
+          renderLabel={TabBarLabel}
+          style={styles.tabBarContainer}
+          tabStyle={styles.tabStyle}
+          indicatorStyle={styles.indicator}
+        />
       </Animated.View>
     );
   },

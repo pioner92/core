@@ -10,15 +10,17 @@ import {Config} from '../../../config';
 import {PlusIcon} from '../../../components/icons/plus-icon';
 import {useTypedSelector} from '../../../system/hooks/use-typed-selector';
 import {useDispatch} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
+import {useLinkTo, useNavigation} from '@react-navigation/native';
 import {Routes} from '../../../navigation/routes';
 import {AddressListWithCheckedItem} from './components/organisation-list/address-list-with-checked-item';
 import {ScreenHeaderTitleWithBackButton} from '../../../components/screen-header/screen-header-title-with-back-button';
 import {StackNavigationProp, StackScreenProps} from '@react-navigation/stack';
 import {TRootStackParamList} from '../../../navigation/types/types';
-import {ModalDeliveryTime} from './components/modals/modal-delivery-time';
 import {ThemedButton} from '../../../components/buttons/themed-button';
-import {IAddressItemResponse} from '../api/types';
+import {
+  IAddressItemResponse,
+  IGetOrganisationByAddressResponse,
+} from '../api/types';
 import {useModal} from '../../../components/modal/modal-provider';
 import {AsyncActionsDelivery} from '../store/async-actions-delivery';
 
@@ -29,18 +31,16 @@ type TNavigation = StackNavigationProp<
   Routes.AddressCreate
 >;
 
-type TProps = StackScreenProps<TRootStackParamList, Routes.AuthCode>;
+type TProps = StackScreenProps<TRootStackParamList, Routes.LoginCode>;
 
-export const AddressList: React.FC<TProps> = React.memo(({navigation}) => {
+export const AddressList: React.FC<TProps> = React.memo(() => {
   const userAddressList = useTypedSelector(state => state.delivery.addressList);
   const dispatch = useDispatch();
   const {navigate} = useNavigation<TNavigation>();
   const cityId = useTypedSelector(state => state.delivery.selectedCityId);
-  const deliveryResult = useTypedSelector(
-    state => state.delivery.getOrganisationResult,
-  );
+  const linkTo = useLinkTo();
 
-  const modal = useModal();
+  const {show} = useModal();
 
   const [
     selectedAddress,
@@ -52,7 +52,8 @@ export const AddressList: React.FC<TProps> = React.memo(({navigation}) => {
   };
 
   const onPressGoToMenu = async () => {
-    dispatch(
+    //@ts-ignore
+    const res: IGetOrganisationByAddressResponse = await dispatch(
       AsyncActionsDelivery.getOrganisationByAddress({
         street: selectedAddress?.street || '',
         house: selectedAddress?.house_num || '',
@@ -61,11 +62,20 @@ export const AddressList: React.FC<TProps> = React.memo(({navigation}) => {
         city_id: cityId,
       }),
     );
-    modal.show();
-  };
-
-  const onPressModal = () => {
-    navigation.navigate(Routes.TabRootScreen);
+    if (res) {
+      show({
+        title: res.successMsgTitle,
+        description: res.successMsgSubtitle,
+        buttons: [
+          {
+            label: 'Понятно',
+            onPress: () => {
+              linkTo(`/${Routes.TabRootScreen}/${Routes.Catalog}`);
+            },
+          },
+        ],
+      });
+    }
   };
 
   useEffect(() => {
@@ -90,11 +100,6 @@ export const AddressList: React.FC<TProps> = React.memo(({navigation}) => {
           rounded={true}
           label={'Перейти в меню'}
           onPress={onPressGoToMenu}
-        />
-        <ModalDeliveryTime
-          title={deliveryResult.successMsgTitle}
-          description={deliveryResult.successMsgSubtitle}
-          onPress={onPressModal}
         />
       </View>
     </SafeAreaView>

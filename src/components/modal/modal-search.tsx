@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 import {CloseCrossIcon} from '../icons/close-cross-icon';
 import {Config} from '../../config';
@@ -7,6 +7,7 @@ import ModalView from 'react-native-modal';
 import {windowHeight, windowWidth} from '../../system/helpers/window-size';
 import {useTypedSelector} from '../../system/hooks/use-typed-selector';
 import {ProductList} from '../../screens/catalog/view/components/product-list/product-list';
+import {IProductItem} from '../../screens/catalog/types/types';
 
 const {Color, UIStyles} = Config;
 
@@ -19,26 +20,26 @@ export const ModalSearch: React.FC<IModalSearch> = React.memo(
   ({hide, isVisible}) => {
     const input = useInput('');
     const products = useTypedSelector(state => state.catalog.products);
-    const [filteredProducts, setFilteredProducts] = useState(products);
+    const [filteredProducts, setFilteredProducts] = useState<IProductItem[]>(
+      [],
+    );
 
     const onSearch = (text: string) => {
       input.onChangeText(text);
-      const items = products?.filter(el =>
-        el.title.toLowerCase().includes(text.toLowerCase().trim()),
-      );
-      setFilteredProducts(items);
+      if (text) {
+        const items = products?.filter(el =>
+          el.title.toLowerCase().includes(text.toLowerCase().trim()),
+        );
+        setFilteredProducts(items);
+      } else {
+        setFilteredProducts([]);
+      }
     };
 
     const onPressClear = () => {
+      hide();
       input.onChangeText('');
-      setFilteredProducts(products);
     };
-
-    useEffect(() => {
-      if (products) {
-        setFilteredProducts(products);
-      }
-    }, [products]);
 
     return (
       <ModalView
@@ -64,13 +65,16 @@ export const ModalSearch: React.FC<IModalSearch> = React.memo(
             <CloseCrossIcon />
           </TouchableOpacity>
         </View>
-        <ProductList
-          componentWrapperStyle={{
-            backgroundColor: Color.WHITE,
-            borderRadius: 12,
-          }}
-          products={filteredProducts}
-        />
+        {filteredProducts.length > 0 ? (
+          <ProductList
+            contentContainerStyle={{marginTop: 50}}
+            componentWrapperStyle={{
+              backgroundColor: Color.WHITE,
+              borderRadius: 12,
+            }}
+            products={filteredProducts}
+          />
+        ) : null}
       </ModalView>
     );
   },

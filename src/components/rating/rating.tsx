@@ -40,6 +40,7 @@ export const Rating: React.FC<IRatingComponent> = ({
         const Icon = getIcon(index < ratingValue);
         return (
           <TouchableOpacity
+            key={index}
             disabled={!isTouchable}
             onPress={() => onPressHandler(index + 1)}>
             <Icon fill={Color.PRIMARY} width={20} {...iconStyle} />

@@ -8,18 +8,14 @@ import {FocusAwareStatusBar} from '../../../system/helpers/focus-aware-status-ba
 import {TitleWithValueRow} from '../../../components/title-with-value-row';
 import {BASE_URL, Config} from '../../../config';
 import {ThemedButton} from '../../../components/buttons/themed-button';
-import {useBottomSheetMenu} from '../../../components/bottom-sheet-menu/bottom-sheet-menu-context';
 import {Input} from '../../../components/input/input';
 import {PromoInput} from './components/promo-input';
 import {EmptyCart} from './components/empty-cart';
 import {CartProductListItem} from './components/cart-product-list-item';
-import {ICartGetDataProductResponse} from '../api/types';
 import {useNavigation} from '@react-navigation/native';
 import {Routes} from '../../../navigation/routes';
 
 const {Color, UIStyles} = Config;
-
-
 
 const rows = [
   {title: 'Итого', paramName: 'total_cost'},
@@ -31,15 +27,11 @@ export const Cart = () => {
   const dispatch = useDispatch();
   const cartData = useTypedSelector(state => state.cart.cartData);
 
-  const modal = useBottomSheetMenu();
-  const {navigate} = useNavigation()
-
+  const {navigate} = useNavigation();
 
   const onPressNext = () => {
-    navigate(Routes.AcceptAddress)
-  }
-
-
+    navigate(Routes.AcceptAddress);
+  };
 
   useEffect(() => {
     dispatch(AsyncActionCart.getCartData({id_org: 3691, order_type: 1}));
@@ -65,6 +57,7 @@ export const Cart = () => {
               {cartData.products.map(el => {
                 return (
                   <CartProductListItem
+                    count={el.count}
                     key={el.id}
                     title={el.title}
                     price={el.price}
@@ -78,20 +71,11 @@ export const Cart = () => {
                   <TitleWithValueRow
                     key={index}
                     title={el?.title}
+                    //@ts-ignore
                     value={`${cartData[el?.paramName] ?? 0} ₽`}
                   />
                 );
               })}
-
-              {/*<TitleWithValueRow*/}
-              {/*  title={'Доставка'}*/}
-              {/*  value={`${cartData.delivery_cost ?? 0} ₽`}*/}
-              {/*/>*/}
-              {/*<TitleWithValueRow*/}
-              {/*  titleStyle={{color: Color.BLACK, ...UIStyles.font15b}}*/}
-              {/*  title={'Итого к оплате'}*/}
-              {/*  value={`${cartData?.total_cost ?? 0} ₽`}*/}
-              {/*/>*/}
               <Input
                 value={''}
                 placeholderText={'Комментарий к заказу'}

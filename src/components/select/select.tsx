@@ -13,6 +13,7 @@ export interface ISelect {
   containerStyle?: ViewStyle;
   items: ICityItem[];
   onSelect: (item: string) => void;
+  selectedItem: ICityItem;
 }
 
 export const Select: React.FC<ISelect> = ({
@@ -21,8 +22,10 @@ export const Select: React.FC<ISelect> = ({
   containerStyle,
   onSelect,
   items,
+  selectedItem,
 }) => {
-  const [value, setValue] = useState(items?.[0]?.title);
+  const [value, setValue] = useState(selectedItem.title);
+
   const onSelectHandler = (item: string) => {
     setValue(item);
     onSelect(item);

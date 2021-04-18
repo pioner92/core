@@ -1,34 +1,87 @@
 import React, {useContext, useState} from 'react';
+import {IThemedButton} from '../buttons/themed-button';
+
+enum ButtonDirection {
+  row = 'row',
+  column = 'column',
+}
+
+interface IModalButton {
+  label: string;
+  onPress: () => void;
+  styles?: Omit<IThemedButton, 'label' | 'onPress'>;
+}
+
+interface IShowCallbackProps {
+  title: string;
+  description: string;
+  buttons: IModalButton[];
+  buttonsDirection?: keyof typeof ButtonDirection;
+}
+type TShowCallback = (props: IShowCallbackProps) => void;
 
 interface IModalProvider {
   isVisible: boolean;
-  show: () => void;
-  hide: () => void;
+  title: string;
+  description: string;
+  show: TShowCallback;
+  close: () => void;
+  buttons: Array<IModalButton>;
+  buttonsDirection: keyof typeof ButtonDirection;
 }
 
 export const ModalContext = React.createContext<IModalProvider>({
-  isVisible: true,
+  isVisible: false,
   show: () => {},
-  hide: () => {},
+  close: () => {},
+  description: '',
+  title: '',
+  buttons: [],
+  buttonsDirection: ButtonDirection.column,
 });
 
 export const useModal = () => {
-  const modalContext = useContext(ModalContext);
+  const {show, close} = useContext(ModalContext);
   return {
-    show: modalContext.show,
-    hide: modalContext.hide,
-    isVisible: modalContext.isVisible,
+    show,
+    close,
   };
 };
 export const ModalProvider: React.FC = ({children}) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [buttonsDirection, setBottomDirection] = useState<
+    keyof typeof ButtonDirection
+  >(ButtonDirection.column);
+  const [buttons, setButtons] = useState<IModalButton[]>([] as IModalButton[]);
+
+  const show: TShowCallback = ({
+    title,
+    description,
+    buttonsDirection = ButtonDirection.column,
+    buttons,
+  }) => {
+    setTitle(title);
+    setDescription(description);
+    setButtons(buttons);
+    setIsVisible(true);
+    setBottomDirection(buttonsDirection);
+  };
+  const close = () => {
+    setIsVisible(false);
+  };
 
   return (
     <ModalContext.Provider
       value={{
-        isVisible: isVisible,
-        show: () => setIsVisible(true),
-        hide: () => setIsVisible(false),
+        isVisible,
+        title,
+        description,
+        show,
+        close,
+        buttons,
+        buttonsDirection,
       }}>
       {children}
     </ModalContext.Provider>

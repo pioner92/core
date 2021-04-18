@@ -38,6 +38,7 @@ export const OrganisationListWithMap: React.FC<TProps> = React.memo(
     const orderType = useTypedSelector(
       state => state.delivery.selectedOrderTypeId,
     );
+    const isLoading = useTypedSelector(state => state.delivery.isLoading);
     const dispatch = useDispatch();
 
     const organisations = useTypedSelector(
@@ -103,7 +104,6 @@ export const OrganisationListWithMap: React.FC<TProps> = React.memo(
         markers.current[item.id] = ref;
       }
     };
-
     useEffect(() => {
       dispatch(
         AsyncActionsDelivery.getOrganisations({
@@ -156,6 +156,7 @@ export const OrganisationListWithMap: React.FC<TProps> = React.memo(
           />
         ) : (
           <BottomSheetOrganisationListWithButton
+            isLoading={isLoading}
             onPressButton={onPressButton}
             data={organisations}
             onSelectItem={onSelectListItem}

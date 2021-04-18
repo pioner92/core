@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {Config} from '../../../../config';
@@ -9,13 +9,17 @@ export interface ICartProductListItem {
   image: string;
   title: string;
   price: number;
+  count: number;
 }
 
 export const CartProductListItem: React.FC<ICartProductListItem> = ({
   image,
   title,
   price,
+  count,
 }) => {
+  const [countValue, setCountValue] = useState(count);
+
   return (
     <View style={styles.container}>
       <FastImage
@@ -26,14 +30,14 @@ export const CartProductListItem: React.FC<ICartProductListItem> = ({
       <View style={styles.textContainer}>
         <Text style={styles.title}>{title}</Text>
         <View style={UIStyles.flexRow}>
-          <Text>{price} ₽</Text>
+          <Text>{price * countValue} ₽</Text>
           <Counter
             containerStyle={styles.counterContainerStyle}
             buttonStyle={styles.counterButtonStyle}
             buttonIconStyle={{fill: Color.PRIMARY}}
             valueStyle={{color: Color.BLACK}}
-            value={2}
-            onChange={() => {}}
+            value={countValue}
+            onChange={setCountValue}
           />
         </View>
       </View>

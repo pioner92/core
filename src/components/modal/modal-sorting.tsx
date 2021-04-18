@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {ModalComponent} from './modal-component';
+import React, {MutableRefObject, RefObject, useRef, useState} from 'react';
+import {ModalComponent, IModalMethods} from './modal-with-component';
 import {ListItemIcons} from '../list-item-icons/list-item-icons';
 import {StartIcon} from '../icons/start-icon';
 import {SortingArrowTop} from '../icons/sorting/sorting-arrow-top';
@@ -41,14 +41,15 @@ const sortingItems = [
 
 interface IModalSorting {
   onSorting: (variant: keyof typeof SortVariant) => void;
+  reference: MutableRefObject<IModalMethods | null>;
 }
 
 export const ModalSorting: React.FC<IModalSorting> = React.memo(
-  ({onSorting}) => {
+  ({onSorting, reference}) => {
     const [selected, setSelected] = useState(-1);
 
     return (
-      <ModalComponent>
+      <ModalComponent ref={props => (reference.current = props)}>
         {sortingItems.map((el, index) => {
           return (
             <ListItemIcons

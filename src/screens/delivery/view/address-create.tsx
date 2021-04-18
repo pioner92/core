@@ -18,27 +18,31 @@ import {windowHeight} from '../../../system/helpers/window-size';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useDispatch} from 'react-redux';
 import {IAddressItem} from '../types/types';
-import {ModalDeliveryNotAvailable} from './components/modals/modal-delivery-not-available';
 import {useModal} from '../../../components/modal/modal-provider';
 import {useNavigation} from '@react-navigation/native';
 import {Routes} from '../../../navigation/routes';
 import {BottomSheetMenuType} from './organisation-list-with-map';
 import {AsyncActionsDelivery} from '../store/async-actions-delivery';
-import {StackScreenProps} from '@react-navigation/stack';
+import {StackNavigationProp, StackScreenProps} from '@react-navigation/stack';
 import {TRootStackParamList} from '../../../navigation/types/types';
 
 const {UIStyles} = Config;
 
-enum ScreenType {
-  createAddress = 'createAddress',
-  acceptAddress = 'acceptAddress',
-}
+type TNavigation = StackNavigationProp<
+  TRootStackParamList,
+  Routes.SelectOrganisationInMap
+>;
 
 type TProps = StackScreenProps<TRootStackParamList, Routes.AddressCreate>;
 
-export const AddressCreate: React.FC<TProps> = React.memo(({route}) => {
+export const AddressCreate: React.FC<TProps> = React.memo(() => {
   const cities = useTypedSelector(state => state.delivery.cities);
-  const cityId = useTypedSelector(state => state.delivery.selectedCityId);
+
+  const {show, close} = useModal();
+
+  const selectedCityId = useTypedSelector(
+    state => state.delivery.selectedCityId,
+  );
 
   const selectCity = useInput(cities?.[0]?.title);
   const inputStreet = useInput('');
@@ -48,10 +52,10 @@ export const AddressCreate: React.FC<TProps> = React.memo(({route}) => {
   const inputFloor = useInput('');
   const inputDomophone = useInput('');
 
-  const modal = useModal();
+  // const modal = useModal();
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
-  const {navigate} = useNavigation();
+  const {navigate} = useNavigation<TNavigation>();
 
   const onSelectCity = (city: string) => {
     selectCity.onChangeText(city);
@@ -75,14 +79,35 @@ export const AddressCreate: React.FC<TProps> = React.memo(({route}) => {
         AsyncActionsDelivery.getOrganisationByAddress({
           city: data.city,
           street: data.street,
-          city_id: cityId,
+          city_id: selectedCityId,
           house: data.house_num,
           country: data.country,
         }),
       );
       navigate(Routes.AddressList);
     } catch (e) {
-      modal.show();
+      show({
+        title: 'К вам пока не доставляем :(',
+        description:
+          'К сожалению, на данный адрес мы не можем организовать доставку, попробуйте указать другой адрес. Также вы можете забрать заказ самостоятельно',
+        buttons: [
+          {
+            label: 'Изменить адрес',
+            onPress: close,
+            styles: {modifier: 'bordered'},
+          },
+          {
+            label: 'Заберу сам',
+            onPress: () => {
+              navigate(Routes.SelectOrganisationInMap, {
+                bottomSheetMenuType: BottomSheetMenuType.Organisations,
+              });
+              close();
+            },
+            styles: {modifier: 'bordered'},
+          },
+        ],
+      });
     }
   };
 
@@ -94,16 +119,8 @@ export const AddressCreate: React.FC<TProps> = React.memo(({route}) => {
     {label: 'Код домофона', props: inputDomophone},
   ];
 
-  // const onPressSetAddress = () => {};
-  const onPressTakeSelf = () => {
-    modal.hide();
-    navigate(Routes.SelectOrganisationInMap, {
-      bottomSheetMenuType: BottomSheetMenuType.Organisations,
-    });
-  };
-
   useEffect(() => {
-    return modal.hide;
+    return close;
   }, []);
 
   return (
@@ -118,6 +135,9 @@ export const AddressCreate: React.FC<TProps> = React.memo(({route}) => {
           <ScreenHeaderTitleWithBackButton title={'Адрес доставки'} />
           {cities?.length > 0 ? (
             <Select
+              selectedItem={
+                cities.find(el => el.id === selectedCityId) || cities[0]
+              }
               wrapperStyle={{marginVertical: 16}}
               items={cities}
               onSelect={onSelectCity}
@@ -161,10 +181,6 @@ export const AddressCreate: React.FC<TProps> = React.memo(({route}) => {
               );
             })}
           </View>
-          <ModalDeliveryNotAvailable
-            onPressSetAddress={modal.hide}
-            onPressTakeSelf={onPressTakeSelf}
-          />
           <ThemedButton
             disabled={!inputHouse.value || !inputStreet.value}
             rounded={true}

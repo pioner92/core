@@ -1,28 +1,18 @@
-import React, {useEffect, useState} from 'react';
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import React, {useEffect, useMemo, useState} from 'react';
+import {Keyboard, KeyboardAvoidingView, Platform, StatusBar, Text, View} from 'react-native';
 import {Color} from './src/assets/styles';
 import {Provider} from 'react-redux';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {PersistGate} from 'redux-persist/integration/react';
-// import {persistor, store} from './src/system/store/configure-store';
 import {NavigationContainer} from '@react-navigation/native';
 import {RootNavigator} from './src/navigation/root-navigator';
-import {permissionGeolocationRequest} from './src/system/helpers/permissions/permission-geolocation-request';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import {PortalHost, PortalProvider} from '@gorhom/portal';
-import {BottomSheetMenuContext} from './src/components/bottom-sheet-menu/bottom-sheet-menu-context';
 import {ModalProvider} from './src/components/modal/modal-provider';
 import {configureStore} from './src/system/store/configure-store';
-import {useTypedSelector} from './src/system/hooks/use-typed-selector';
-import {ApiService} from './src/system/api/api-service';
+import {Modal} from './src/components/modal/modal';
+import {BottomSheetMenuProvider} from './src/components/bottom-sheet-menu/bottom-sheet-modal-provider';
+import {BottomSheetModalComponent} from './src/components/bottom-sheet-menu/bottom-sheet-modal/bottom-sheet-modal-component';
 
 if (__DEV__) {
   //@ts-ignore
@@ -32,15 +22,24 @@ if (__DEV__) {
 const App: React.FC = ({children}) => {
   const [isLoading, setIsLoading] = useState(true);
 
-  const {store, persistor} = configureStore(() => setIsLoading(false));
+  const {store, persistor} = useMemo(
+    () => configureStore(() => setIsLoading(false)),
+    [],
+  );
 
   useEffect(() => {
-    permissionGeolocationRequest();
+    // permissionGeolocationRequest();
   }, []);
 
   if (isLoading) {
     return (
-      <View style={{flex: 1, backgroundColor: 'white'}}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'white',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
         <Text>Loading......</Text>
       </View>
     );
@@ -52,26 +51,25 @@ const App: React.FC = ({children}) => {
       <PersistGate loading={null} persistor={persistor}>
         <Provider store={store}>
           <PortalProvider>
-            {/*<SafeAreaView style={[styles.container]} edges={[]}>*/}
             <BottomSheetModalProvider>
-              <KeyboardAvoidingView
-                onTouchStart={Keyboard.dismiss}
-                style={{flex: 1}}
-                //@ts-ignore
-                behavior={Platform.OS == 'ios' ? 'padding' : null}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}>
-                <NavigationContainer>
-                  <BottomSheetMenuContext>
-                    <ModalProvider>
+              <BottomSheetMenuProvider>
+                <ModalProvider>
+                  <KeyboardAvoidingView
+                    onTouchStart={Keyboard.dismiss}
+                    style={{flex: 1}}
+                    behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+                    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}>
+                    <NavigationContainer>
                       <StatusBar barStyle={'dark-content'} />
                       <RootNavigator>{children}</RootNavigator>
-                    </ModalProvider>
-                  </BottomSheetMenuContext>
-                  <PortalHost name="modal" />
-                </NavigationContainer>
-              </KeyboardAvoidingView>
+                      <Modal />
+                      <PortalHost name="modal" />
+                      <BottomSheetModalComponent />
+                    </NavigationContainer>
+                  </KeyboardAvoidingView>
+                </ModalProvider>
+              </BottomSheetMenuProvider>
             </BottomSheetModalProvider>
-            {/*</SafeAreaView>*/}
           </PortalProvider>
         </Provider>
       </PersistGate>

@@ -1,6 +1,7 @@
 export enum Routes {
-  AuthPhone = 'AuthPhone',
-  AuthCode = 'AuthCode',
+  LoginPhone = 'LoginPhone',
+  LoginCode = 'LoginCode',
+  LoginStack = 'LoginStack',
   Policy = 'Policy',
   DeliveryAndPayment = 'DeliveryAndPayment',
   ProfileNotAuth = 'ProfileNotAuth',

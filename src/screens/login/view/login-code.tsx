@@ -22,9 +22,9 @@ import {ArrowLeftIcon} from '../../../components/icons/arrow-left-icon';
 const CODE_COUNT = 4;
 const TIMER_VALUE = 10;
 
-type TProps = StackScreenProps<TRootStackParamList, Routes.AuthCode>;
+type TProps = StackScreenProps<TRootStackParamList, Routes.LoginCode>;
 
-export const AuthCode: React.FC<TProps> = ({route, navigation}) => {
+export const LoginCode: React.FC<TProps> = ({route, navigation}) => {
   const {request_id, phoneNumber} = route.params;
   const [timerValue, setTimerValue] = useState(TIMER_VALUE);
   const [isError, setIsError] = useState(false);

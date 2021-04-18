@@ -1,11 +1,13 @@
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {BottomSheetBackdropProps} from '@gorhom/bottom-sheet';
 import Animated, {Extrapolate, interpolate} from 'react-native-reanimated';
-import {useBottomSheetMenu} from '../../bottom-sheet-menu-context';
+import {useBottomSheetMenu} from '../../bottom-sheet-modal-provider';
 
-const CustomBackdrop = ({animatedIndex, style}: BottomSheetBackdropProps) => {
-  // animated variables
-  const modal = useBottomSheetMenu();
+interface ICustomBackdrop extends BottomSheetBackdropProps {
+  close: () => void;
+}
+
+const CustomBackdrop = ({animatedIndex, style, close}: ICustomBackdrop) => {
   const animatedOpacity = useMemo(
     () =>
       interpolate(animatedIndex, {
@@ -28,7 +30,7 @@ const CustomBackdrop = ({animatedIndex, style}: BottomSheetBackdropProps) => {
     [style, animatedOpacity],
   );
 
-  return <Animated.View onTouchEnd={modal.hide} style={containerStyle} />;
+  return <Animated.View onTouchStart={close} style={containerStyle} />;
 };
 
 export default CustomBackdrop;

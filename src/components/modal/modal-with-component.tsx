@@ -1,23 +1,38 @@
 import {StyleSheet, View, ViewStyle} from 'react-native';
-import React, {useImperativeHandle, useRef} from 'react';
-import {useModal} from './modal-provider';
+import React, {useImperativeHandle, useState} from 'react';
 import {Config} from '../../config';
 import {windowHeight, windowWidth} from '../../system/helpers/window-size';
 import ModalView from 'react-native-modal';
 
-const {Color} = Config;
-
-interface ModalComponent {
+interface ModalWithComponent {
   containerStyle?: ViewStyle;
   modalStyle?: ViewStyle;
 }
 
-export const ModalComponent: React.FC<ModalComponent> = ({
-  children,
-  modalStyle,
-  containerStyle,
-}) => {
-  const modal = useModal();
+export interface IModalMethods {
+  show: () => void;
+  close: () => void;
+}
+
+export const ModalComponent = React.forwardRef<
+  IModalMethods,
+  React.PropsWithChildren<ModalWithComponent>
+>(({children, modalStyle, containerStyle}, ref) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  const close = () => {
+    setIsVisible(false);
+  };
+  const show = () => {
+    setIsVisible(true);
+  };
+
+  useImperativeHandle(ref, () => {
+    return {
+      show,
+      close,
+    };
+  });
 
   return (
     <ModalView
@@ -29,12 +44,12 @@ export const ModalComponent: React.FC<ModalComponent> = ({
       backdropOpacity={0.6}
       animationIn={'fadeIn'}
       animationOut={'fadeOut'}
-      onBackdropPress={modal.hide}
-      isVisible={modal.isVisible}>
+      onBackdropPress={close}
+      isVisible={isVisible}>
       <View style={[styles.modalView, modalStyle]}>{children}</View>
     </ModalView>
   );
-};
+});
 
 const styles = StyleSheet.create({
   modalView: {

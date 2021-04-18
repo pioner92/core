@@ -1,12 +1,12 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Routes} from './routes';
-import {Catalog} from '../screens/catalog/view/catalog';
 import {More} from '../screens/more/view/more';
 import {Config} from '../config';
 import {Cart} from '../screens/cart/view/cart';
 import {ProfileStack} from '../screens/profile/view/profile-stack';
 import {useTypedSelector} from '../system/hooks/use-typed-selector';
+import {Catalog} from '../screens/catalog/view/catalog';
 
 const Tab = createBottomTabNavigator();
 const {Color, UIStyles} = Config;
@@ -40,12 +40,15 @@ export const TabNavigation: React.FC = () => {
     ...UIStyles.font9b,
     backgroundColor: Color.PRIMARY,
     color: Color.WHITE,
-    transform: [{translateY: 30}, {translateX: -30}],
+    transform: [{translateY: 30},
+      // {translateX: -30}
+    ],
     width: 60,
   };
 
   return (
     <Tab.Navigator
+      backBehavior={'firstRoute'}
       tabBarOptions={{
         activeTintColor: Color.DARK,
         inactiveTintColor: Color.GREY_400,

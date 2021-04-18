@@ -14,11 +14,12 @@ import {AsyncActionsLogin} from '../store/async-actions-login';
 import {StackScreenProps} from '@react-navigation/stack';
 import {TRootStackParamList} from '../../../navigation/types/types';
 import {Config} from '../../../config';
+import {CommonActions} from '@react-navigation/native';
 const {Color, UIStyles} = Config;
 
-type TProps = StackScreenProps<TRootStackParamList, Routes.AuthPhone>;
+type TProps = StackScreenProps<TRootStackParamList, Routes.LoginPhone>;
 
-export const AuthPhone: React.FC<TProps> = ({navigation}) => {
+export const LoginPhone: React.FC<TProps> = ({navigation}) => {
   const phoneInput = useInput('');
   const [isPolicyAccepted, setIsPolyAccepted] = useState(false);
 
@@ -29,7 +30,12 @@ export const AuthPhone: React.FC<TProps> = ({navigation}) => {
   }, []);
 
   const onPressClose = () => {
-    navigation.replace(Routes.TabRootScreen);
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{name: Routes.TabRootScreen}],
+      }),
+    );
   };
 
   const openPolicy = useCallback(() => {
@@ -41,7 +47,7 @@ export const AuthPhone: React.FC<TProps> = ({navigation}) => {
       const result = await dispatch(
         AsyncActionsLogin.getSms({phone: phoneInput.value}),
       );
-      navigation.push(Routes.AuthCode, {
+      navigation.push(Routes.LoginCode, {
         phoneNumber: phoneInput.value,
         //@ts-ignore
         request_id: result.request_id,
@@ -75,7 +81,7 @@ export const AuthPhone: React.FC<TProps> = ({navigation}) => {
           onPressPolicy={openPolicy}
         />
         <ThemedButton
-          wrapperStyle={{marginBottom:10}}
+          wrapperStyle={{marginBottom: 10}}
           onPress={onPressNext}
           label="ДАЛЕЕ"
           rounded={true}

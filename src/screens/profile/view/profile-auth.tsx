@@ -5,7 +5,7 @@ import {UIStyles} from '../../../assets/styles';
 import {ProfileIcon} from '../../../components/icons/profile-icon';
 import {RubleWithCircleArrowIcon} from '../../../components/icons/ruble-with-circle-arrow-icon';
 import {ExitSvg} from '../../../components/icons/exit-icon';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {CommonActions} from '@react-navigation/native';
 import {Routes} from '../../../navigation/routes';
 import {useDispatch} from 'react-redux';
 import {useTypedSelector} from '../../../system/hooks/use-typed-selector';
@@ -42,22 +42,27 @@ const ScreenItems = [
   createScreenRowItem('Мои заказы', CartIcon, Routes.Orders),
   createScreenRowItem('Настройки профиля', ProfileIcon, Routes.ProfileSettings),
   createScreenRowItem('Изменить город', MapMarkerIcon, Routes.SelectCity),
-  createScreenRowItem('Выйти', ExitSvg, Routes.AuthPhone),
+  createScreenRowItem('Выйти', ExitSvg, Routes.LoginStack),
 ];
 
 type TProps = StackScreenProps<TRootStackParamList, Routes.ProfileAuth>;
 
 export const ProfileAuth: React.FC<TProps> = ({navigation}) => {
-  const {navigate} = useNavigation();
   const userData = useTypedSelector(state => state.profile.userData);
   const dispatch = useDispatch();
 
   const onPressHandler = (route: keyof typeof Routes) => {
-    if (route === Routes.AuthPhone) {
-      navigation.replace(route as Routes.AuthPhone);
+    if (route === Routes.LoginStack) {
       dispatch(ActionsLogin.logoutAccount());
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{name: route}],
+        }),
+      );
     } else {
-      navigate(route);
+      //@ts-ignore
+      navigation.push(route);
     }
   };
 

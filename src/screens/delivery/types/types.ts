@@ -22,6 +22,7 @@ export interface IOrderTypesItem {
   id: string;
   name: string;
   descriprion: string;
+  isRemoted: boolean;
   logo: string;
 }
 

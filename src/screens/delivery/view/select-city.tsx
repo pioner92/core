@@ -9,23 +9,38 @@ import {Config} from '../../../config';
 import {Divider} from '../../../components/divider';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedButton} from '../../../components/buttons/themed-button';
-import {CreateNewAddressModal} from './components/create-new-address-modal';
-import {useBottomSheetMenu} from '../../../components/bottom-sheet-menu/bottom-sheet-menu-context';
+import {BottomSheetOrderTypeContent} from './components/bottom-sheet-order-type-content';
 import {ActionDelivery} from '../store/action-delivery';
+import {useBottomSheetMenu} from '../../../components/bottom-sheet-menu/bottom-sheet-modal-provider';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {TRootStackParamList} from '../../../navigation/types/types';
+import {Routes} from '../../../navigation/routes';
 
 const {UIStyles} = Config;
+
+export type TNavigationPropsOrderTypeModal = CompositeNavigationProp<
+  StackNavigationProp<TRootStackParamList, Routes.SelectOrganisationInMap>,
+  StackNavigationProp<TRootStackParamList, Routes.AddressCreate>
+>;
 
 export const SelectCity: React.FC = React.memo(() => {
   const dispatch = useDispatch();
   const [selectedCity, setSelectedCity] = useState<string>('-1');
   const insets = useSafeAreaInsets();
+  const {navigate} = useNavigation<TNavigationPropsOrderTypeModal>();
 
   const cities = useTypedSelector(state => state.delivery.cities);
 
-  const bottomModal = useBottomSheetMenu();
+  const {show, close} = useBottomSheetMenu();
 
   const onPressSave = () => {
-    bottomModal?.show();
+    show({
+      Component: () => (
+        <BottomSheetOrderTypeContent navigate={navigate} close={close} />
+      ),
+      snapPoints: ['35%'],
+    });
     dispatch(ActionDelivery.setSelectedCityId(selectedCity));
   };
 
@@ -57,12 +72,12 @@ export const SelectCity: React.FC = React.memo(() => {
         disabled={selectedCity === '-1'}
         wrapperStyle={StyleSheet.flatten([
           styles.buttonWrapper,
-          {marginBottom: -insets.bottom},
+          {marginBottom: -insets.bottom + 10},
         ])}
         label="Сохранить"
         onPress={onPressSave}
       />
-      <CreateNewAddressModal cityId={selectedCity} />
+      {/*<CreateNewAddressModal cityId={selectedCity} />*/}
     </SafeAreaView>
   );
 });

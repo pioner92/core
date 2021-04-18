@@ -6,6 +6,7 @@ export const ApiService = axios.create({
     'Content-Type': 'application/json',
     Authorization: 'Bearer abf038b312fca2fc08cad87a1522d73a',
     'x-api-token': 'htug9ji0oqpr329442u891q3sdasw',
+    Accept: 'application/json',
     // sensitive: true,
   },
   baseURL: BASE_URL,

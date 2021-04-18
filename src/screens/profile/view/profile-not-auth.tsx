@@ -12,7 +12,7 @@ type TProps = StackScreenProps<TRootStackParamList, Routes.ProfileNotAuth>;
 
 export const ProfileNotAuth: React.FC<TProps> = ({navigation}) => {
   const onPress = () => {
-    navigation.replace(Routes.AuthPhone);
+    navigation.replace(Routes.LoginStack);
   };
 
   return (
